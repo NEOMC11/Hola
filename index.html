@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Tu tienda de mods, texturas, shaders y apps para Minecraft">
+    <meta name="theme-color" content="#0064ff">
     <title>GameStore - Firebase Edition</title>
     
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GameStore">
+    
+    <!-- Icons -->
     <link rel="icon" type="image/png" href="assets/NEOCRAFTss.png">
+    <link rel="apple-touch-icon" href="assets/icon-192x192.png">
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-extra.css">
     
     <style>
         /* Estilos adicionales para admin */
@@ -89,6 +105,81 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
+        
+        /* Botón de instalación PWA */
+        .install-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #0a0e27;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        .install-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(0, 255, 136, 0.6);
+        }
+        
+        .install-btn i {
+            font-size: 1.2rem;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+            }
+            50% {
+                box-shadow: 0 8px 35px rgba(0, 255, 136, 0.7);
+            }
+        }
+        
+        /* Mejorar área de click de videos */
+        .video-card {
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            cursor: pointer;
+            z-index: 1;
+        }
+        
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 100, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .video-card:hover .play-icon {
+            transform: translate(-50%, -50%) scale(1.2);
+            background: rgba(0, 100, 255, 1);
+        }
     </style>
 </head>
 <body>
@@ -133,6 +224,10 @@
                 <a href="https://whatsapp.com/channel/0029Vb5HMl2GJP8EjrRAXq2i" target="_blank" class="social-link tiktok">
                     <i class="fab fa-whatsapp"></i>
                     <span>Whatsapp</span>
+                </a>
+                <a href="https://minecraft-pack-generator.vercel.app/" target="_blank" class="social-link tiktok">
+                    <i class="fas fa-file-alt o fas fa-file-lines"></i>
+                    <span>ConTent</span>
                 </a>
             </div>
 
@@ -305,9 +400,20 @@
                             </select>
                         </div>
                         
+                        <div class="form-group-file">
+                            <label>Capturas de Pantalla - Subir Archivos (Opcional - Máx 5MB c/u)</label>
+                            <input type="file" id="contentScreenshotsFiles" accept="image/*" multiple class="file-upload-input">
+                            <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
+                                Puedes seleccionar múltiples imágenes
+                            </small>
+                        </div>
+                        
                         <div class="form-group">
-                            <label>URLs de Capturas de Pantalla (separadas por comas)</label>
+                            <label>URLs de Capturas (Si prefieres URLs externas)</label>
                             <input type="text" id="contentScreenshots" placeholder="url1, url2, url3">
+                            <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
+                                Puedes combinar archivos subidos con URLs
+                            </small>
                         </div>
                         
                         <div class="form-group">
@@ -330,10 +436,10 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>URL del Video (YouTube embed) *</label>
-                            <input type="url" id="videoUrl" placeholder="https://www.youtube.com/embed/..." required>
+                            <label>URL del Video (YouTube) *</label>
+                            <input type="url" id="videoUrl" placeholder="https://www.youtube.com/watch?v=..." required>
                             <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
-                                Usa el formato: https://www.youtube.com/embed/VIDEO_ID
+                                Acepta formato watch?v= o youtu.be/
                             </small>
                         </div>
                         
@@ -378,7 +484,22 @@
     </div>
 
     <!-- Scripts -->
-    <script type="module" src="./firebase-config.js"></script>
+    <script type="module" src="./supabase-config.js"></script>
     <script type="module" src="./app.js"></script>
+    
+    <!-- Registrar Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('Service Worker registrado exitosamente:', registration.scope);
+                    })
+                    .catch((error) => {
+                        console.log('Error al registrar Service Worker:', error);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>
